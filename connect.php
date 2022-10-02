@@ -28,14 +28,14 @@
         border-collapse: collapse;
         margin: 24px 0;
         font-size: 0.9 em;
-        min-width: 500px;
+        min-width: 800px;
         border-radius: 12px 12px 12px 12px;
         overflow: hidden;
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
     }
 
     .table-style thead tr {
-        background-color: #00B4D8;
+        background-color: #5F5FF6;
         color: #FFFFFF;
         text-align: center;
     }
