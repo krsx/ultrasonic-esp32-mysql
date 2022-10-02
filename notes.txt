@@ -173,3 +173,7 @@ void loop() {
 //  read_ultrasonic();
 //  delay(1000);
 }
+
+http://192.168.28.89/ultrasonic_esp32/connect.php
+
+http://192.168.28.89/ultrasonic_esp32/connect.php?hasil_pengukuran=1.3
