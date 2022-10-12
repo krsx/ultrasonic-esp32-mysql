@@ -3,10 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="5">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
-    <title>ESP32-Ultrasonic</title>
+    <title>Data ESP32 - Ultrasonic HC-SR04</title>
 </head>
 <style>
     body {
@@ -15,27 +16,30 @@
     }
 
     .title1 {
-        font-size: 38px;
+        font-family: "Poppins", sans-serif;
+        font-size: 44px;
         margin: 25px 0 0 0;
     }
 
     .title2 {
+        font-family: "Poppins", sans-serif;
         margin: 0 0 0 0;
-        font-size: 38px;
+        font-size: 44px;
     }
 
     .table-style {
         border-collapse: collapse;
-        margin: 24px 0;
+        margin: 24px 0 48px;
         font-size: 0.9 em;
         min-width: 800px;
         border-radius: 12px 12px 12px 12px;
         overflow: hidden;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.15);
     }
 
     .table-style thead tr {
-        background-color: #5F5FF6;
+        /* background-color: #5F5FF6; */
+        background-color: black;
         color: #FFFFFF;
         text-align: center;
     }
@@ -51,7 +55,7 @@
 </style>
 
 <body>
-    <h1 class="title1">IMPLEMENTASI ESP32</h1>
+    <h1 class="title1">DATA IMPLEMENTASI ESP32</h1>
     <h1 class="title2">SENSOR ULTRASONIC HC-SR04</h1>
 
     <?php
@@ -91,7 +95,7 @@
     $sql = 'SELECT * FROM tbl_pengukuran  ORDER BY id DESC';
     echo '<table class="table-style" style="margin-left:auto;margin-right:auto;">
         <thead>
-            <tr> 
+            <tr>    
                 <th>ID</th> 
                 <th>Hasil Pengukuran (cm)</th>
                 <th>Timestamp</th> 
