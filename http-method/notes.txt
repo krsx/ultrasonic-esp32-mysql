@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <?php
+
+    function connection()
+    {
+        $servername = 'localhost';
+        $username = 'root';
+        $password = '';
+        $database_name = 'db_ultrasonic_esp32';
+
+        $connection = new mysqli($servername, $username, $password, $database_name);
+
+        return $connection;
+    }
+    if (isset($_GET["hasil_pengukuran"])) {
+        $hasil_pengukuran = $_GET["hasil_pengukuran"];
+
+        $connection = connection();
+
+        if ($connection->connect_error) {
+            die("MySQL connection failed: " . $connection->connect_error);
+        }
+        $sql = "INSERT INTO tbl_pengukuran (hasil_pengukuran) VALUES  ($hasil_pengukuran)";
+
+        if ($connection->query($sql) == TRUE) {
+            echo "Record data baru " . $hasil_pengukuran . " berhasil ditambahkan";
+        } else {
+            echo "Error: " . $sql . "=>" . $connection->error;
+        }
+    }
+    // else {
+    //     echo "Hasil pengukuran (jarak) masih belum set pada HTTP request";
+    // }
+
+    $connection = connection();
+
+    $sql = 'SELECT * FROM tbl_pengukuran  ORDER BY id DESC';
+    echo '<table cellspacing="5" cellpadding="5">
+        <tr> 
+          <td>ID</td> 
+          <td>Hasil Pengukuran (cm)</td>
+          <td>Timestamp</td> 
+        </tr>';
+
+    if ($result = $connection->query($sql)) {
+        while ($row = $result->fetch_assoc()) {
+            $row_id = $row['id'];
+            $row_hasil_pengukuran = $row['hasil_pengukuran'];
+            $row_timestamp = $row['timestamp'];
+            echo '<tr> 
+                    <td>' . $row_id . '</td> 
+                    <td>' . $row_hasil_pengukuran . '</td> 
+                    <td>' . $row_timestamp . '</td> 
+                 </tr>';
+        }
+        $result->free();
+    }
+    $connection->close();
+    ?>
+    </table>
+</body>
+
+</html>
+
+
+==========================================================================
+
+#include "WiFi.h"
+#include <HTTPClient.h>
+
+//mendefinisikan nomer pin trigger dan echo
+const int trigPin = 5;
+const int echoPin = 18;
+
+//mendefinisikan wifi
+const char* WIFI_SSID = "AB MARINA_2";
+const char* WIFI_PASSWORD =  "pak yu924";
+
+//mendefinisikan variabel
+#define SPEED_SOUND 0.034
+long durasi;
+float jarak;
+unsigned long last_time = 0;
+unsigned long time_delay = 5000;
+
+//mendefinisikan url
+String HOST_NAME = "http://192.168.28.89";
+String PATH_NAME = "/ultrasonic_esp32/connect.php";
+String query = "?hasil_pengukuran=";
+
+//setup kode awal
+void setup() {
+  Serial.begin(115200);
+
+  //setup wifi
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.println("Connecting to WiFi..");
+  }
+  Serial.println("");
+  Serial.print("Connected to WiFi network with IP Address: ");
+  Serial.println(WiFi.localIP());
+  
+  //pendefinisian I/O untuk pin trigger dan echo
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+}
+
+float read_ultrasonic(){
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  //menyimpan durasi
+  durasi = pulseIn(echoPin, HIGH);
+
+  //menghitung jarak  
+  jarak = durasi * SPEED_SOUND/2;
+
+  //apabila error hasil pengukuran jarak
+  if(isnan(jarak) || (jarak < 0)){
+    Serial.println("Pembacaan jarak pada sensor ultrasonic HC-SR04 gagal!");
+  }
+  
+  //menampilkan output hasil pengukuran
+  Serial.print("Jarak (cm): ");
+  Serial.println(jarak);
+
+  return jarak;
+}
+
+void loop() {
+  if((millis() - last_time) > time_delay){
+    if(WiFi.status() == WL_CONNECTED){
+      HTTPClient http;
+
+      String server_path = HOST_NAME + PATH_NAME + query + String(read_ultrasonic());
+
+      http.begin(server_path.c_str());
+
+      int http_response_code = http.GET();
+
+      if(http_response_code > 0){
+        Serial.print("HTTP Response code: ");
+        Serial.println(http_response_code);
+        String payload = http.getString();
+        Serial.println(payload);
+      }
+      else{
+        Serial.print("Error code: ");
+        Serial.println(http_response_code);
+      }
+    }
+    else{
+      Serial.println("WiFi Disconnected"); 
+    }
+    last_time = millis();
+  }
+//  read_ultrasonic();
+//  delay(1000);
+}
+
+wifi rumah
+http://192.168.28.89/ultrasonic_esp32/connect.php
+
+http://192.168.28.89/ultrasonic_esp32/connect.php?hasil_pengukuran=1.3
+
+wifi faisal
+http://192.168.146.232/ultrasonic_esp32/connect.php
+
+http://192.168.146.232/ultrasonic_esp32/connect.php?hasil_pengukuran=1.3
+
+http://192.168.146.232/ultrasonic_esp32/connect.php?hasil_pengukuran=1.3?hasil_pengukuran2=2.5?hasil_pengukuran3=90
+
+192.168.247.232
+
+wifi oswald
+http://192.168.28.232/ultrasonic_esp32/connect.php
+
+http://192.168.248.232/ultrasonic_esp32/connect.php
+
+http://192.168.248.232/ultrasonic_esp32/grafik.php
+
